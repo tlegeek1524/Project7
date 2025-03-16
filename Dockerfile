@@ -70,11 +70,6 @@ RUN chmod -R 775 /var/www/bootstrap/cache
 
 # คัดลอกและตั้งค่า Nginx
 COPY nginx.conf /etc/nginx/sites-available/default
-RUN ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/
-RUN rm -f /etc/nginx/sites-enabled/default
-
-# คัดลอกและตั้งค่า Supervisor
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # ตรวจสอบ config และรัน
 RUN nginx -t
