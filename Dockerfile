@@ -1,6 +1,6 @@
 # ใช้ PHP image ที่มี Nginx และ PHP-FPM
 # ใช้ PHP image ที่มี Nginx และ PHP-FPM
-FROM php:8.2-fpm
+FROM php:8.1-fpm
 
 # ติดตั้ง dependencies และ build tools
 RUN apt-get update && apt-get install -y \
