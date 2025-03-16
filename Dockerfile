@@ -55,8 +55,6 @@ RUN chmod -R 755 /var/www/bootstrap/cache
 
 # คัดลอกและตั้งค่า Nginx
 COPY nginx.conf /etc/nginx/sites-available/default
-RUN ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/
-RUN rm -f /etc/nginx/sites-enabled/default  # ลบ config default ถ้ามี
 
 # ใช้ JSON format สำหรับ CMD
 CMD ["sh", "-c", "service nginx start && php-fpm"]
