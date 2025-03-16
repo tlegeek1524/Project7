@@ -32,6 +32,7 @@ RUN docker-php-ext-install mbstring
 RUN docker-php-ext-install pcntl
 RUN docker-php-ext-install bcmath
 RUN docker-php-ext-install zip
+RUN docker-php-ext-install pdo pdo_mysql  # เพิ่มสำหรับ database ถ้าใช้ MySQL
 
 # เพิ่ม memory limit สำหรับ PHP
 RUN echo "memory_limit=-1" > /usr/local/etc/php/conf.d/memory-limit.ini
@@ -55,9 +56,11 @@ RUN chmod -R 755 /var/www/bootstrap/cache
 
 # คัดลอกและตั้งค่า Nginx
 COPY nginx.conf /etc/nginx/sites-available/default
+RUN ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/
+RUN rm -f /etc/nginx/sites-enabled/default
 
-# ใช้ JSON format สำหรับ CMD
-CMD ["sh", "-c", "service nginx start && php-fpm"]
+# ใช้ CMD เพื่อรัน Nginx และ PHP-FPM
+CMD ["sh", "-c", "php-fpm -D && nginx -g 'daemon off;'"]
 
 # Expose port 80
 EXPOSE 80
