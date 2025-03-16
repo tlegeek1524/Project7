@@ -12,9 +12,8 @@ RUN apt-get update && apt-get install -y \
     unzip \
     nginx
 
-# ติดตั้ง PHP extensions ที่ Laravel ต้องการ
+# ติดตั้ง PHP extensions ที่ Laravel ต้องการ (ไม่ต้องติดตั้ง database extensions)
 RUN docker-php-ext-install \
-    pdo_pgsql \
     mbstring \
     exif \
     pcntl \
@@ -27,4 +26,14 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # คัดลอกโค้ด Laravel ไปยัง container
 WORKDIR /var/www
 COPY . .
-RUN composer install
+RUN composer install --optimize-autoloader --no-dev
+RUN php artisan key:generate
+RUN chown -R www-data:www-data /var/www
+RUN chmod -R 755 /var/www/storage
+
+# ตั้งค่า Nginx
+COPY nginx.conf /etc/nginx/sites-available/default
+CMD service nginx start && php-fpm
+
+# Expose port 80
+EXPOSE 80
