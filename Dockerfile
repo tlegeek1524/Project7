@@ -26,13 +26,12 @@ RUN apt-get update && apt-get install -y \
     make \
     libtool
 
-# Configure และติดตั้ง PHP extensions (แยกคำสั่งเพื่อ debug)
+# Configure และติดตั้ง PHP extensions
 RUN docker-php-ext-configure gd --with-jpeg --with-freetype
 RUN docker-php-ext-install mbstring
 RUN docker-php-ext-install pcntl
 RUN docker-php-ext-install bcmath
 RUN docker-php-ext-install zip
-# ลบคำสั่ง RUN docker-php-ext-install json ออก
 
 # เพิ่ม memory limit สำหรับ PHP
 RUN echo "memory_limit=-1" > /usr/local/etc/php/conf.d/memory-limit.ini
@@ -44,20 +43,22 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 WORKDIR /var/www
 COPY . .
 
-# รัน composer install ด้วย retry และเพิ่ม verbosity เพื่อ debug
+# รัน composer install
 RUN composer install --optimize-autoloader --no-dev --verbose || { echo "Composer install failed"; exit 1; }
 
-# ตั้งค่า Laravel
-RUN touch .env  # สร้างไฟล์ .env ว่างถ้ายังไม่มี
+# สร้าง .env ถ้ายังไม่มี และตั้งค่า Laravel
+RUN touch .env
 RUN php artisan key:generate --force
 RUN chown -R www-data:www-data /var/www
 RUN chmod -R 755 /var/www/storage
 RUN chmod -R 755 /var/www/bootstrap/cache
 
-# ตั้งค่า Nginx
+# คัดลอกและตั้งค่า Nginx
 COPY nginx.conf /etc/nginx/sites-available/default
+RUN ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/
+RUN rm -f /etc/nginx/sites-enabled/default  # ลบ config default ถ้ามี
 
-# ใช้ JSON format สำหรับ CMD เพื่อแก้ warning
+# ใช้ JSON format สำหรับ CMD
 CMD ["sh", "-c", "service nginx start && php-fpm"]
 
 # Expose port 80
