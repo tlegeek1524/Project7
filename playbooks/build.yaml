@@ -7,7 +7,7 @@
         name: Project7
         source: build
         build:
-          path: /path/to/your/Project7/
+          path: ~/Project7
         state: present
         force_source: yes
 
