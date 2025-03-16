@@ -1,0 +1,13 @@
+- name: Deploy Laravel and Database Containers
+  hosts: all
+  become: yes
+  tasks:
+    - name: Stop existing containers
+      community.docker.docker_compose:
+        project_src: /path/to/your/laravel_project/
+        state: absent
+
+    - name: Start containers using Docker Compose
+      community.docker.docker_compose:
+        project_src: /path/to/your/laravel_project/
+        state: present

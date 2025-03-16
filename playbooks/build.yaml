@@ -1,0 +1,18 @@
+- name: Build Docker Image for Laravel App
+  hosts: all
+  become: yes
+  tasks:
+    - name: Build Docker image for node-server
+      community.docker.docker_image:
+        name: laravel_node_server
+        source: build
+        build:
+          path: /path/to/your/laravel_project/
+        state: present
+        force_source: yes
+
+    - name: Build Docker image for phpmyadmin
+      community.docker.docker_image:
+        name: phpmyadmin
+        source: pull
+        state: present
