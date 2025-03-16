@@ -4,10 +4,10 @@
   tasks:
     - name: Build Docker image for node-server
       community.docker.docker_image:
-        name: laravel_node_server
+        name: Project7
         source: build
         build:
-          path: /path/to/your/laravel_project/
+          path: /path/to/your/Project7/
         state: present
         force_source: yes
 
