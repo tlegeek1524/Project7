@@ -2,7 +2,7 @@ pipeline {
     agent any
     environment {
         SERVER_IP = "47.129.60.53"
-        PROJECT_NAME = "Project7"
+        PROJECT_NAME = "laravel"
         WORKSPACE_PATH = "/var/lib/jenkins/workspace/${PROJECT_NAME}"
         REMOTE_PATH = "~/${PROJECT_NAME}"
     }
@@ -10,7 +10,7 @@ pipeline {
     stages {
         stage("Copy files to Docker server") {
             steps {
-                sh "scp -r /var/lib/jenkins/workspace/Project7/* root@47.129.60.53:~/Project7"
+                sh "scp -r /var/lib/jenkins/workspace/laravel/* root@47.129.60.53:~/laravel"
             }
         }
 
