@@ -4,7 +4,7 @@ pipeline {
         SERVER_IP = "13.215.209.74"
         PROJECT_NAME = "Project7"
         WORKSPACE_PATH = "/var/lib/jenkins/workspace/${PROJECT_NAME}"
-        REMOTE_PATH = "~/deploy/${PROJECT_NAME}"
+        REMOTE_PATH = "~/${PROJECT_NAME}"
     }
     
     stages {
