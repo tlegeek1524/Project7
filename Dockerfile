@@ -20,7 +20,6 @@ RUN apt-get update && apt-get install -y \
     zip \
     unzip \
     nginx \
-    supervisor \
     build-essential \
     autoconf \
     gcc \
@@ -33,7 +32,6 @@ RUN docker-php-ext-install mbstring
 RUN docker-php-ext-install pcntl
 RUN docker-php-ext-install bcmath
 RUN docker-php-ext-install zip
-RUN docker-php-ext-install pdo pdo_mysql
 
 # เพิ่ม memory limit สำหรับ PHP
 RUN echo "memory_limit=-1" > /usr/local/etc/php/conf.d/memory-limit.ini
@@ -48,21 +46,18 @@ COPY . .
 # รัน composer install
 RUN composer install --optimize-autoloader --no-dev --verbose || { echo "Composer install failed"; exit 1; }
 
-# สร้าง .env ถ้ายังไม่มี และตั้งค่า Laravel
-RUN touch .env
+# ตั้งค่า Laravel และกำหนด permission
+RUN touch .env  # สร้างไฟล์ .env ว่างถ้ายังไม่มี
 RUN php artisan key:generate --force
 RUN chown -R www-data:www-data /var/www
 RUN chmod -R 755 /var/www/storage
 RUN chmod -R 755 /var/www/bootstrap/cache
 
-# คัดลอกและตั้งค่า Nginx
+# ตั้งค่า Nginx
 COPY nginx.conf /etc/nginx/sites-available/default
-RUN ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/
-RUN rm -f /etc/nginx/sites-enabled/default
 
-# คัดลอกและตั้งค่า Supervisor
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+# ใช้ JSON format สำหรับ CMD
+CMD ["sh", "-c", "service nginx start && php-fpm"]
 
-# ตรวจสอบและรัน Nginx ก่อน
-RUN nginx -t  # ตรวจสอบ config ของ Nginx
-CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+# Expose port 80
+EXPOSE 80
