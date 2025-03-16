@@ -1,18 +1,20 @@
 # ใช้ PHP image ที่มี Nginx และ PHP-FPM
 FROM php:8.1-fpm
 
-# ติดตั้ง dependencies
+# ติดตั้ง dependencies และ build tools
 RUN apt-get update && apt-get install -y \
     git \
     curl \
     libpng-dev \
     libonig-dev \
     libxml2-dev \
+    libzip-dev \
     zip \
     unzip \
-    nginx
+    nginx \
+    build-essential
 
-# ติดตั้ง PHP extensions ที่ Laravel ต้องการ (ไม่ต้องติดตั้ง database extensions)
+# ติดตั้ง PHP extensions
 RUN docker-php-ext-install \
     mbstring \
     exif \
