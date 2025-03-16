@@ -1,5 +1,5 @@
 # ใช้ PHP image ที่มี Nginx และ PHP-FPM
-FROM php:8.1-fpm
+FROM php:8.2-fpm
 
 # ติดตั้ง dependencies และ build tools
 RUN apt-get update && apt-get install -y \
@@ -12,6 +12,9 @@ RUN apt-get update && apt-get install -y \
     libjpeg-dev \
     libicu-dev \
     libfreetype6-dev \
+    libwebp-dev \
+    libxpm-dev \
+    zlib1g-dev \
     libc-dev \
     pkg-config \
     zip \
@@ -23,14 +26,13 @@ RUN apt-get update && apt-get install -y \
     make \
     libtool
 
-# Configure และติดตั้ง PHP extensions
-RUN docker-php-ext-configure gd --with-jpeg --with-freetype && \
-    docker-php-ext-install \
-    mbstring \
-    pcntl \
-    bcmath \
-    zip \
-    json
+# Configure และติดตั้ง PHP extensions (แยกคำสั่งเพื่อ debug)
+RUN docker-php-ext-configure gd --with-jpeg --with-freetype
+RUN docker-php-ext-install mbstring
+RUN docker-php-ext-install pcntl
+RUN docker-php-ext-install bcmath
+RUN docker-php-ext-install zip
+# ลบคำสั่ง RUN docker-php-ext-install json ออก
 
 # เพิ่ม memory limit สำหรับ PHP
 RUN echo "memory_limit=-1" > /usr/local/etc/php/conf.d/memory-limit.ini
@@ -52,7 +54,9 @@ RUN chmod -R 755 /var/www/storage
 
 # ตั้งค่า Nginx
 COPY nginx.conf /etc/nginx/sites-available/default
-CMD service nginx start && php-fpm
+
+# ใช้ JSON format สำหรับ CMD เพื่อแก้ warning
+CMD ["sh", "-c", "service nginx start && php-fpm"]
 
 # Expose port 80
 EXPOSE 80
