@@ -48,6 +48,7 @@ COPY . .
 RUN composer install --optimize-autoloader --no-dev --verbose || { echo "Composer install failed"; exit 1; }
 
 # ตั้งค่า Laravel
+RUN touch .env  # สร้างไฟล์ .env ว่างถ้ายังไม่มี
 RUN php artisan key:generate --force
 RUN chown -R www-data:www-data /var/www
 RUN chmod -R 755 /var/www/storage
