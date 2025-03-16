@@ -20,6 +20,7 @@ RUN apt-get update && apt-get install -y \
     zip \
     unzip \
     nginx \
+    supervisor \
     build-essential \
     autoconf \
     gcc \
@@ -59,8 +60,11 @@ COPY nginx.conf /etc/nginx/sites-available/default
 RUN ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/
 RUN rm -f /etc/nginx/sites-enabled/default
 
-# ใช้ CMD เพื่อรัน Nginx และ PHP-FPM
-CMD ["sh", "-c", "php-fpm -D && nginx -g 'daemon off;'"]
+# คัดลอกและตั้งค่า Supervisor
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+# ใช้ CMD เพื่อรัน Supervisor
+CMD ["/usr/bin/supervisord", "-n"]
 
 # Expose port 80
-EXPOSE 8080
+EXPOSE 80
