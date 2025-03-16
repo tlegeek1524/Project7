@@ -32,7 +32,7 @@ RUN docker-php-ext-install mbstring
 RUN docker-php-ext-install pcntl
 RUN docker-php-ext-install bcmath
 RUN docker-php-ext-install zip
-RUN docker-php-ext-install pdo pdo_mysql  # เพิ่มสำหรับ database ถ้าใช้ MySQL
+RUN docker-php-ext-install pdo pdo_mysql
 
 # เพิ่ม memory limit สำหรับ PHP
 RUN echo "memory_limit=-1" > /usr/local/etc/php/conf.d/memory-limit.ini
@@ -63,4 +63,4 @@ RUN rm -f /etc/nginx/sites-enabled/default
 CMD ["sh", "-c", "php-fpm -D && nginx -g 'daemon off;'"]
 
 # Expose port 80
-EXPOSE 80
+EXPOSE 8080
