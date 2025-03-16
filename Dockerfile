@@ -63,8 +63,6 @@ RUN rm -f /etc/nginx/sites-enabled/default
 # คัดลอกและตั้งค่า Supervisor
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
-# ใช้ CMD เพื่อรัน Supervisor
-CMD ["/usr/bin/supervisord", "-n"]
-
-# Expose port 80
-EXPOSE 80
+# ตรวจสอบและรัน Nginx ก่อน
+RUN nginx -t  # ตรวจสอบ config ของ Nginx
+CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
